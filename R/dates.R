@@ -2,11 +2,6 @@
 # Copyright 2013 - 2014, Ilias Kotinas, <henfiber at gmail com>
 
 
-
-
-suppressPackageStartupMessages({
-    library("lubridate") # options(lubridate.fasttime = TRUE)
-})
 # set 3 digits for milliseconds - default is not set which means 0
 options(digits.secs = 3)
 
@@ -43,6 +38,7 @@ from_seconds <- function(x) {
 #' @return  A datetime object
 #' 
 #' @export
+#' @importFrom lubridate floor_date hour hours seconds minutes  days weeks years
 floor_date_extended <- function (x, unit = c("second", "minute", "hour",
                                              "Workday", "quarter",
                                              "day", "week",
@@ -76,6 +72,7 @@ floor_date_extended <- function (x, unit = c("second", "minute", "hour",
 #' @return  A period object
 #' 
 #' @export
+#' @importFrom lubridate period
 period_extended <- function (num = NULL, units = "second", ..., workday_bounds = c(8,20)) {
     if(units == "Workday") {
         dur <- workday_bounds[2] - workday_bounds[1]
@@ -96,27 +93,27 @@ period_extended <- function (num = NULL, units = "second", ..., workday_bounds =
 
 # Get the current time - converted in UTC
 now_utc <- function() {
-    now(tzone = "UTC")
+    lubridate::now(tzone = "UTC")
 }
 
 # Return the current hour in UTC (minutes and seconds are truncated)
 now_hour_utc <- function() {
-    floor_date(now_utc(), "h")   #as.POSIXct(trunc(as.POSIXlt(Sys.time(), tz = "UTC"), "hours"))
+    lubridate::floor_date(now_utc(), "h")   #as.POSIXct(trunc(as.POSIXlt(Sys.time(), tz = "UTC"), "hours"))
 }
 
 # Return the current day in UTC (hours, minutes and seconds are truncated)
 today_utc <- function() {
-    today(tzone = "UTC")
+    lubridate::today(tzone = "UTC")
 }
 
 # Return the previous day (hours, minutes and seconds are truncated)
 yesterday <- function(tz = "") {
-    today(tz) - days(1)
+    lubridate::today(tz) - lubridate::days(1)
 }
 
 # Return the previous day in UTC (hours, minutes and seconds are truncated)
 yesterday_utc <- function() {
-    yesterday(tz = "UTC")
+    lubridate::yesterday(tz = "UTC")
 }
 
 
@@ -215,7 +212,7 @@ expand_rel_time <- function(abbr) {
 fmt_range_seconds <- function(r) {
     lapply(r, function(x)  {
         if("character" %in% class(x))
-            as.numeric(parse_date_time(x, "y-m-d H:M:S"))
+            as.numeric(lubridate::parse_date_time(x, "y-m-d H:M:S"))
         else
             as.numeric(x)
         })
@@ -255,6 +252,7 @@ print_range <- function(r) {
 #' @return           a single range (recent period) or sequence of ranges (seasonal)
 #'
 #' @export
+#' @importFrom lubridate now floor_date hour hours seconds minutes  days weeks years
 range_recent_tc <- function(tc = c("hour", "sec", "min", "Workday", "day", "week", "Month", "quarter", "year"),
                             N=24,
                             what = c("recent", "seasonal"),
@@ -268,7 +266,7 @@ range_recent_tc <- function(tc = c("hour", "sec", "min", "Workday", "day", "week
     what <- match.arg(what)
 
     # Set anchor
-    if(missing(anchor) || is.null(anchor)) anchor <- now(tz)
+    if(missing(anchor) || is.null(anchor)) anchor <- lubridate::now(tz)
     if(complete) anchor <- floor_date_extended(anchor, tc)
 
     if(what == "recent") {
@@ -312,16 +310,16 @@ range_last_tc <- function(tc = c("h", "m", "d", "w", "M", "y"), N = 1, anchor, c
     tc <- match.arg(tc)
 
     # Set anchor
-    if(missing(anchor) || is.null(anchor)) anchor <- now()
+    if(missing(anchor) || is.null(anchor)) anchor <- lubridate::now()
     if(complete) anchor <- floor_date_extended(anchor, tc)
     now_h <- anchor
     switch (tc,
-        "m" = list(gte = (now_h - minutes(N)), lte = now_h),
-        "h" = list(gte = (now_h - hours(N)),   lte = now_h),
-        "d" = list(gte = (now_h - days(N)),    lte = now_h),
-        "w" = list(gte = (now_h - weeks(N)),   lte = now_h),
-        "M" = list(gte = (now_h - months(N)),  lte = now_h),
-        "y" = list(gte = (now_h - years(N)),   lte = now_h)
+        "m" = list(gte = (now_h - lubridate::minutes(N)), lte = now_h),
+        "h" = list(gte = (now_h - lubridate::hours(N)),   lte = now_h),
+        "d" = list(gte = (now_h - lubridate::days(N)),    lte = now_h),
+        "w" = list(gte = (now_h - lubridate::weeks(N)),   lte = now_h),
+        "M" = list(gte = (now_h - lubridate::months(N)),  lte = now_h),
+        "y" = list(gte = (now_h - lubridate::years(N)),   lte = now_h)
     )
 }
 
