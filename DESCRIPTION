@@ -1,6 +1,6 @@
 Package: later
 Type: Package
-Title: Various utility functions for time-related modelling
+Title: Utility functions for time-related modelling
 Version: 0.1.1
 Author: Ilias Kotinas
 Maintainer: Ilias Kotinas <henfiber@gmail.com>
