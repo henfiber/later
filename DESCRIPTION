@@ -7,7 +7,7 @@ Maintainer: Ilias Kotinas <henfiber@gmail.com>
 Description: Various helper functions for time-related modelling.
     Companion to the cronr package.
 License: GPL (>= 2)
-Depends: R (>= 3.1.0)
+Depends: R (>= 3.1.0), data.table
 Imports: utils, lubridate, inline, parallel
 Suggests: tcltk2
 Encoding: UTF-8

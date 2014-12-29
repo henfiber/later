@@ -109,3 +109,120 @@ file_modified_less_than <- function(fpath, interval = 60) {
 
 
 
+
+
+
+
+#' Robust saveRDS
+#'
+#' A saveRDS with atomic write and backup support
+#'
+#' @param dt                     The object to save
+#' @param fpath                  The path to save the object
+#' @param backup_on_overwrite    Whether to keep a backup when overwriting an existing file
+#' @param allowZero              Whether to save zero length objects
+#' @param ...                    The dots are passed to saveRDS
+#'
+#' @return                       TRUE if successful, a negative value if it fails
+#' @export
+#'
+saveRDS_robust <- function(dt, fpath, backup_on_overwrite = TRUE, allowZero = FALSE, ...) {
+
+    if(missing(dt) || is.null(dt))
+        return(invisible(-1))
+    if(!allowZero && is.data.frame(dt) && nrow(dt) == 0) {
+        warning("The input object has 0 rows. Aborting. Run with allowZero = TRUE to allow writing a zero records object.")
+        return(invisible(-1))
+    }
+
+    # Not supporting vectors. We are expecting a single file path here
+    fpath <- fpath[1]
+
+    # Define temporary (atomic update) and backup path (just to be safe)
+    tmppath <- paste0(fpath, ".tmp")
+    bakpath <- paste0(fpath, ".bak")
+
+
+    # Take a backup of the previous model if one exists
+    if(backup_on_overwrite && file.exists(fpath)) {
+        file.copy(fpath, bakpath, overwrite = TRUE)
+    }
+
+    # Save the frame to a temporary file
+    saveRDS(dt, tmppath, ...)
+
+    # Now we can replace the old model with the new one in an atomic (?) rename
+    if(file.rename(tmppath, fpath))
+        return(invisible(TRUE))
+    else {
+        warning("Could not properly save the object. Check ", fpath, ".", call. = TRUE, immediate. = TRUE)
+        file.remove(tmppath)
+        return(invisible(-2))
+    }
+}
+
+
+
+
+
+#' Robust readRDS
+#'
+#' Read an RDS file with some checking and restoring from a backup
+#'
+#' @param fpath                 Where to get the rds file from
+#' @param restore_from_backup   Whether to restore from backup and replace a corrupt file
+#'
+#' @return                      The object or NULL if the read fails
+#' 
+#' @export
+readRDS_robust <- function(fpath, restore_from_backup = TRUE) {
+
+    # Not supporting vectors. We are expecting a single file path here
+    fpath <- fpath[1]
+    existing <- file.exists(fpath)
+
+    if(existing)
+        dt <- tryCatch(readRDS(fpath), error = function(w) w)
+
+    if (!existing || "simpleError" %in% class(dt)) {
+        warning("Could not load the object from file : ", fpath, ". ",
+                "Testing if a backup file exists.")
+
+        bakpath <- paste0(fpath, ".bak")
+        if(!file.exists(bakpath)) {
+            warning("Could not find a backup file named: ", bakpath)
+            return(invisible(NULL))
+        } else {
+            dt <- tryCatch(readRDS(bakpath), error = function(w) w)
+
+            if ("simpleError" %in% class(dt)) {
+                warning("An attempt to load the object from backup file : ", bakpath,
+                        " also failed! Check ", fpath, ".", immediate. = TRUE, call. = TRUE)
+                return(invisible(NULL))
+            }
+
+            message("Loading from backup file : ", bakpath, " was successful!")
+
+            # Restore from backup
+            if(restore_from_backup) {
+                if(!file.copy(bakpath, fpath, overwrite = TRUE))
+                    warning("Restoring the original file from the backup failed. Check ", fpath)
+            }
+
+            return(invisible(dt))
+        }
+    }
+    invisible(dt)
+}
+
+
+
+
+
+
+
+
+
+
+
+
