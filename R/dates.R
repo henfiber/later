@@ -4,7 +4,7 @@
 
 # set 3 digits for milliseconds - default is not set which means 0
 options(digits.secs = 3)
-
+options(lubridate.fasttime = TRUE)
 
 
 
