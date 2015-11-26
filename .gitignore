@@ -1,2 +1,11 @@
+# Ignore temporary files (linux editor files and others)
+*.tmp
+*~
+*.log
+*.DS_Store
+*.bak
+
+.Rproj.user
 .Rhistory
 .RData
+.Ruserdata

@@ -1,13 +1,18 @@
 Package: later
 Type: Package
-Title: Utility functions for time-related modelling
-Version: 0.1.1
-Author: Ilias Kotinas
+Title: A Periodic Batch Processing Framework 
+Version: 0.1.2
+Author: person("Ilias", "Kotinas", email = "henfiber@gmail.com",
+                  role = c("aut", "cre"))
 Maintainer: Ilias Kotinas <henfiber@gmail.com>
-Description: Various helper functions for time-related modelling.
-    Companion to the cronr package.
+Description: Utility functions for time-related modelling.
+    Companion to the cronr package. This is a package that aids 
+    in running analytical procedures in a periodic schedule. 
+    It may be useful in batch processing pipelines where new data are made 
+    available periodically
 License: GPL (>= 2)
-Depends: R (>= 3.1.0), data.table
+Depends: R (>= 3.1.0), cronr, data.table
 Imports: utils, lubridate, inline, parallel
-Suggests: tcltk2
+Suggests: tcltk2, testthat
 Encoding: UTF-8
+LazyData: true
