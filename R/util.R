@@ -221,6 +221,49 @@ readRDS_robust <- function(fpath, restore_from_backup = TRUE) {
 
 
 
+### LOCKING ---------------------------------------------------
+
+
+
+# Add lock file
+add_lock <- function(lock_file = "service.lock") {
+    file.create(lock_file, showWarnings = FALSE)
+}
+
+
+
+# Remove lock file
+remove_lock <- function(lock_file = "service.lock") {
+    if(file.exists(lock_file))
+        file.remove(lock_file)
+}
+
+
+
+#' Run expression with a lock file set
+#' 
+#' Run expr after adding a lock - finally remove the lock 
+#'
+#' @param expr        The expression to run
+#' @param lock_file   The path to the lock file
+#'
+#' @return            the return value of the expression
+#' @export
+with_lock <- function(expr, lock_file = getOption("lock_file", "service.lock")) {
+    add_lock(lock_file)
+    res <- eval(expr, envir = parent.frame())
+    remove_lock(lock_file)
+    res
+}
+
+
+
+
+
+
+
+
+
 
 
 
