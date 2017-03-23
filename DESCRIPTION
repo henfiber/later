@@ -10,6 +10,8 @@ Description: Utility functions for time-related modelling.
     in running analytical procedures in a periodic schedule. 
     It may be useful in batch processing pipelines where new data are made 
     available periodically
+URL: http://github.com/henfiber/later/
+BugReports: https://github.com/henfiber/later/issues
 License: GPL (>= 2)
 Depends: R (>= 3.1.0), cronr, data.table
 Imports: utils, lubridate, inline, parallel
