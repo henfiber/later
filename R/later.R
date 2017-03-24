@@ -2,12 +2,10 @@
 #'
 #' A Periodic Batch Processing Framework in R
 #'
-#' This is a package that aids in running analytical procedures in a periodic 
-#' schedule. It may be useful in batch processing pipelines where new data are 
+#' This is a package that aids in running analytical procedures in a periodic
+#' schedule. It may be useful in batch processing pipelines where new data are
 #' made available periodically.
 #'
-#' @section later functions:
-#' late
 #'
 #' @docType package
 #' @name later

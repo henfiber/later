@@ -12,7 +12,7 @@
 #' @return           A list with hits and misses for files and dates
 #'
 #' @examples
-#' cache_state_24h  <- cache_state_range_recent(range = range_recent_tc(N = 24), 
+#' cache_state_24h  <- cache_state_range_recent(range = range_recent_tc(N = 24),
 #'                                              tc = "hour", data_path = "data/cache")
 #'
 #' @export
@@ -48,11 +48,11 @@ cache_state_range_recent <- function(range, tc = "hour", data_path = "data/cache
 
 #' Load cache for a specific range
 #'
-#' @param range 
-#' @param data_path 
-#' @param tc 
+#' @param range       The range of the cache to load
+#' @param data_path   The path to look for cache files
+#' @param tc          The date unit used to split cache files (granularity)
 #'
-#' @return
+#' @return data.table object
 #' @export
 cache_load <- function(range, data_path = "data/cache", tc = "hour") {
     if(missing(range) || is.null(range))
@@ -151,7 +151,7 @@ cache_purge_expired <- function(ttl = 2592000, data_path = "data/cache", archive
 #' @param data_path     The data path to save the parts of the dataset
 #' @param split_field   The field name to use for the splitting
 #'
-#' @return
+#' @return TRUE if successful
 #' @export
 split_data_on_field <- function(DT, data_path = "data/cache", split_field) {
     if(missing(split_field) || is.null(split_field))
@@ -189,7 +189,7 @@ split_data_on_field <- function(DT, data_path = "data/cache", split_field) {
 #' @param date_field    The name of the date field to use for splitting
 #' @param date_unit     The date unit to use for rounding to complete intervals
 #'
-#' @return
+#' @return invisible(NULL)
 #' @export
 split_data_on_date <- function(DT, data_path = "data/cache", date_field,
                                date_unit = c("hour", "day", "Month",
@@ -224,13 +224,13 @@ split_data_on_date <- function(DT, data_path = "data/cache", date_field,
 #'
 #' Split dataset DT on both a timestamp field and a categorical field
 #'
-#' @param DT 
-#' @param data_path 
-#' @param split_field 
-#' @param date_field 
-#' @param date_unit 
+#' @param DT              The data table/frame to split
+#' @param data_path       Where to save the split parts
+#' @param split_field     Which field to use for splitting
+#' @param date_field      The date field to use for date splitting
+#' @param date_unit       The unit to round dates to
 #'
-#' @return
+#' @return invisible(NULL)
 #' @export
 #'
 split_data_on_field_and_date <- function(DT, data_path = "data/cache",
@@ -284,11 +284,11 @@ split_data_on_field_and_date <- function(DT, data_path = "data/cache",
 
 #' Save the model to a file using a robust function
 #'
-#' @param dt_model 
-#' @param fpath 
-#' @param backup_on_overwrite  
+#' @param dt_model  The model to save
+#' @param fpath     Where to save it
+#' @param backup_on_overwrite  Whether to keep a backup on overwrite
 #'
-#' @return 
+#' @return invisible(NULL)
 #' @export
 #'
 model_save <- function(dt_model, fpath, backup_on_overwrite = TRUE) {
