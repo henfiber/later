@@ -232,7 +232,15 @@ add_lock <- function(lock_file = "service.lock") {
 
 
 
-# Remove lock file
+
+#' Remove lock file
+#' 
+#' Companion to add_lock and wait_lock
+#'
+#' @param lock_file   The path to the lock file
+#'
+#' @return            The return value of file.remove
+#' @export
 remove_lock <- function(lock_file = "service.lock") {
     if(file.exists(lock_file))
         file.remove(lock_file)
