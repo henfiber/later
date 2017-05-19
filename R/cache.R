@@ -3,7 +3,7 @@
 
 
 
-#' Get cache state for a specific range
+#' Get cache state for a specific continuous range (recent data)
 #'
 #' @param range      A list in the format list(gte = ..., lte = ...) expressing the date range to check in cache
 #' @param tc         The sampling period of the cache
@@ -19,7 +19,7 @@
 cache_state_range_recent <- function(range, tc = "hour", data_path = "data/cache") {
 
     if(missing(range) || is.null(range))
-        stop("a specific range is required in cache_list_dates")
+        stop("a specific range is required in cache_state_range_recent")
 
     unit_ranges <- seq.POSIXt(range$gte, range$lte, by = tc)
 
@@ -38,6 +38,39 @@ cache_state_range_recent <- function(range, tc = "hour", data_path = "data/cache
 
 
 
+
+
+#' Get cache state for a specific seasonal range
+#'
+#' @param range      A list of seasonal range-lists in the format list(gte = ..., lte = ...) expressing the date ranges to check in cache
+#' @param data_path  The data path to look at
+#'
+#' @return           A list with hits and misses for files and dates
+#'
+#' @examples
+#' cache_state_24h  <- cache_state_range_seasonal(range = range_recent_tc(what = "seasonal", N = 24),
+#'                                                tc = "hour", data_path = "data/cache")
+#'
+#' @export
+cache_state_range_seasonal <- function(range, data_path = "data/cache") {
+
+    if(missing(range) || is.null(range))
+        stop("a specific range is required in cache_state_range_recent")
+
+    unit_ranges <- do.call(c, lapply(range, "[[", "gte"))
+
+    # Construct paths from date sequence
+    paths <- sapply(unit_ranges, function(u) {
+        unit_cache <- format.POSIXct(u, "%Y/%m/%d/%H")    # "%m/%w/%H" for : month/weekday/hour
+        d_dir      <- file.path(data_path, unit_cache)
+        d_path     <- file.path(d_dir, "dt.rds")
+    })
+
+    # Return list of existing files and missing dates
+    existing <- file.exists(paths)
+    list(files_hit = paths[existing], files_miss = paths[!existing],
+         dates_hit = unit_ranges[existing], dates_miss = unit_ranges[!existing])
+}
 
 
 

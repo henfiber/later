@@ -16,9 +16,9 @@ options(lubridate.fasttime = TRUE)
 #' as.POSIXct wrapper to convert seconds since epoch to datetime class
 #'
 #' @param x  The integer which stores the seconds
-#' 
+#'
 #' @return   A POSIXct object
-#' 
+#'
 #' @export
 from_seconds <- function(x) {
     as.POSIXct(x, origin="1970-01-01")
@@ -34,9 +34,9 @@ from_seconds <- function(x) {
 #' @param x               The datetime object
 #' @param unit            The extended unit (including workday) to pass in floor_date
 #' @param workday_bounds  The workday time-of-day bounds to use
-#' 
+#'
 #' @return  A datetime object
-#' 
+#'
 #' @export
 #' @importFrom lubridate floor_date hour hours seconds minutes  days weeks years
 floor_date_extended <- function (x, unit = c("second", "minute", "hour",
@@ -65,12 +65,12 @@ floor_date_extended <- function (x, unit = c("second", "minute", "hour",
 #' Currently just added Workday
 #'
 #' @param num             How many units of that period
-#' @param units           Which time unit 
+#' @param units           Which time unit
 #' @param ...             The dots are passed to period
 #' @param workday_bounds  The workday time-of-day bounds to use
-#' 
+#'
 #' @return  A period object
-#' 
+#'
 #' @export
 #' @importFrom lubridate period
 period_extended <- function (num = NULL, units = "second", ..., workday_bounds = c(8,20)) {
@@ -135,9 +135,9 @@ yesterday_utc <- function() {
 #' Expand a shorthand abbreviation like "-1m" to a list with a sign, value and unit
 #'
 #' @param abbr            The abbreviated period expression
-#' 
+#'
 #' @return   A list with the sign, value, unit, expanded unit and expression
-#' 
+#'
 #' @export
 expand_rel_time <- function(abbr) {
     abbr <- gsub(" ", "", abbr, fixed = TRUE) # remove spaces
@@ -205,9 +205,9 @@ expand_rel_time <- function(abbr) {
 #' Format timestamps in range to integer seconds
 #'
 #' @param r  The range list with datetime objects
-#' 
+#'
 #' @return   The new range with integers expressing the seconds
-#' 
+#'
 #' @export
 fmt_range_seconds <- function(r) {
     lapply(r, function(x)  {
@@ -224,7 +224,7 @@ fmt_range_seconds <- function(r) {
 #' Compactly print a time range
 #'
 #' @param r  The range list to print
-#' 
+#'
 #' @export
 print_range <- function(r) {
     paste(lapply(r, function(x) {
@@ -254,7 +254,7 @@ print_range <- function(r) {
 #' @export
 #' @importFrom lubridate now floor_date hour hours seconds minutes  days weeks years
 range_recent_tc <- function(tc = c("hour", "sec", "min", "Workday", "day", "week", "Month", "quarter", "year"),
-                            N=24,
+                            N = 24,
                             what = c("recent", "seasonal"),
                             sc = c("day", "hour", "Workday", "week", "Month", "quarter", "year"),
                             complete = TRUE,
@@ -284,6 +284,7 @@ range_recent_tc <- function(tc = c("hour", "sec", "min", "Workday", "day", "week
         to <- if(right_open) anchor - seconds(0.001) else anchor
         return(list(gte = from, lte = to))
     } else {
+        N = N - 1 # subtract one since the "0" diff period will be included as well
         to <- switch (sc,
                 "sec"     = anchor - seconds(N:0),
                 "min"     = anchor - minutes(N:0),
@@ -355,7 +356,7 @@ range_from_expr <- function(period_expr = "720h", anchor = NULL) {
 #' @param timevector  The vector of datetime objects
 #' @param tc          the time unit to use for constructing the interval
 #'
-#' @return            The list of ranges 
+#' @return            The list of ranges
 #'
 #' @export
 ranges_from_dates <- function(timevector, tc = "hour") {

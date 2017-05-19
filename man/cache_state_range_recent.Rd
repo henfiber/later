@@ -2,7 +2,7 @@
 % Please edit documentation in R/cache.R
 \name{cache_state_range_recent}
 \alias{cache_state_range_recent}
-\title{Get cache state for a specific range}
+\title{Get cache state for a specific continuous range (recent data)}
 \usage{
 cache_state_range_recent(range, tc = "hour", data_path = "data/cache")
 }
@@ -17,7 +17,7 @@ cache_state_range_recent(range, tc = "hour", data_path = "data/cache")
 A list with hits and misses for files and dates
 }
 \description{
-Get cache state for a specific range
+Get cache state for a specific continuous range (recent data)
 }
 \examples{
 cache_state_24h  <- cache_state_range_recent(range = range_recent_tc(N = 24),
