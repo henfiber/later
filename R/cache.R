@@ -43,6 +43,7 @@ cache_state_range_recent <- function(range, tc = "hour", data_path = "data/cache
 #' Get cache state for a specific seasonal range
 #'
 #' @param range      A list of seasonal range-lists in the format list(gte = ..., lte = ...) expressing the date ranges to check in cache
+#' @param tc         The sampling period of the cache
 #' @param data_path  The data path to look at
 #'
 #' @return           A list with hits and misses for files and dates
@@ -52,12 +53,12 @@ cache_state_range_recent <- function(range, tc = "hour", data_path = "data/cache
 #'                                                tc = "hour", data_path = "data/cache")
 #'
 #' @export
-cache_state_range_seasonal <- function(range, data_path = "data/cache") {
+cache_state_range_seasonal <- function(range, tc = "hour", data_path = "data/cache") {
 
     if(missing(range) || is.null(range))
         stop("a specific range is required in cache_state_range_recent")
 
-    unit_ranges <- do.call(c, lapply(range, "[[", "gte"))
+    unit_ranges <- do.call(c, lapply(range, function(r) seq.POSIXt(r$gte, r$lte, by = tc)))
 
     # Construct paths from date sequence
     paths <- sapply(unit_ranges, function(u) {
