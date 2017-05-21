@@ -60,7 +60,7 @@ cache_load <- function(range, data_path = "data/cache", tc = "hour") {
     if(missing(range) || is.null(range))
         stop("a specific range is required in cache_load")
 
-    cache_state <- cache_state_range_recent(range = range, tc = tc, data_path = data_path)
+    cache_state <- cache_state_range(range = range, tc = tc, data_path = data_path)
     cache_files <- cache_state$files_hit
 
     rbindlist(lapply(cache_files, function(x) {
