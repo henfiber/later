@@ -3,62 +3,30 @@
 
 
 
-#' Get cache state for a specific continuous range (recent data)
+
+#' Get cache state for a specific single or multi range
 #'
-#' @param range      A list in the format list(gte = ..., lte = ...) expressing the date range to check in cache
+#' @param range      A single range-list or list of range-lists in the format list(gte = ..., lte = ...) expressing the date ranges to check in cache
 #' @param tc         The sampling period of the cache
 #' @param data_path  The data path to look at
 #'
 #' @return           A list with hits and misses for files and dates
 #'
 #' @examples
-#' cache_state_24h  <- cache_state_range_recent(range = range_recent_tc(N = 24),
-#'                                              tc = "hour", data_path = "data/cache")
+#' r = range_recent_tc(what = "seasonal", tc = "hour", N = 30, sc = "day")
+#' cache_state_H  <- cache_state_range(range = r, tc = "hour", data_path = "data/cache")
 #'
 #' @export
-cache_state_range_recent <- function(range, tc = "hour", data_path = "data/cache") {
+cache_state_range <- function(range, tc = "hour", data_path = "data/cache") {
 
-    if(missing(range) || is.null(range))
-        stop("a specific range is required in cache_state_range_recent")
+    if(missing(range) || is.null(range) || length(range) == 0)
+        stop("a specific range is required in cache_state_range")
 
-    unit_ranges <- seq.POSIXt(range$gte, range$lte, by = tc)
-
-    # Construct paths from date sequence
-    paths <- sapply(unit_ranges, function(u) {
-        unit_cache <- format.POSIXct(u, "%Y/%m/%d/%H")
-        d_dir  <- file.path(data_path, unit_cache)
-        d_path <- file.path(d_dir, "dt.rds")
-    })
-
-    # Return list of existing files and missing dates
-    existing <- file.exists(paths)
-    list(files_hit = paths[existing], files_miss = paths[!existing],
-         dates_hit = unit_ranges[existing], dates_miss = unit_ranges[!existing])
-}
-
-
-
-
-
-#' Get cache state for a specific seasonal range
-#'
-#' @param range      A list of seasonal range-lists in the format list(gte = ..., lte = ...) expressing the date ranges to check in cache
-#' @param tc         The sampling period of the cache
-#' @param data_path  The data path to look at
-#'
-#' @return           A list with hits and misses for files and dates
-#'
-#' @examples
-#' cache_state_24h  <- cache_state_range_seasonal(range = range_recent_tc(what = "seasonal", N = 24),
-#'                                                tc = "hour", data_path = "data/cache")
-#'
-#' @export
-cache_state_range_seasonal <- function(range, tc = "hour", data_path = "data/cache") {
-
-    if(missing(range) || is.null(range))
-        stop("a specific range is required in cache_state_range_recent")
-
-    unit_ranges <- do.call(c, lapply(range, function(r) seq.POSIXt(r$gte, r$lte, by = tc)))
+    # Check if the first argument is a single or mutli range
+    if(is.list(range) && is.list(range[[1]]))
+        unit_ranges <- unique(do.call(c, lapply(range, function(r) seq.POSIXt(r$gte, r$lte, by = tc))))
+    else
+        unit_ranges <- seq.POSIXt(range$gte, range$lte, by = tc)
 
     # Construct paths from date sequence
     paths <- sapply(unit_ranges, function(u) {
